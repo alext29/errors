@@ -1,0 +1,3 @@
+# Simplified golang errors.
+
+More documentation soon...
