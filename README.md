@@ -63,9 +63,7 @@ mid.go
 10     return fmt.Errorf("external error")
 11 }
 ```
-
-This code will generate log smilar to the one below. Note the filename, line numbers and timestamps are accurately recorded.
-
+Expected log output.
 ```bash
 E1128 21:19:07.663216    3586 mid.go:4] external error
 E1128 21:19:07.663222    3586 mid.go:4] external function failed
@@ -93,9 +91,7 @@ mid.go
 6      return nil
 7  }
 ```
-
-This code will generate log smilar to the one below. Note the filename, line numbers and timestamps are accurately recorded.
-
+Expected log output.
 ```bash
 E1128 21:19:07.663222    3586 mid.go:4] reached error condition: test
 E1128 21:19:07.663226    3586 top.go:5] failed mid function: test
