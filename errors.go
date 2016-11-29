@@ -59,18 +59,8 @@ func New(format string, args ...interface{}) error {
 	return err.add(file, line, fmt.Errorf(format, args...))
 }
 
-// Wrap generates header information for error.
-func Wrap(e error) error {
-	if e == nil {
-		return nil
-	}
-	file, line := fileline(2)
-	err := &Error{}
-	return err.add(file, line, e)
-}
-
-// Wrapf adds a error to stack with additional context.
-func Wrapf(e error, format string, args ...interface{}) error {
+// Wrap adds a error to stack with additional context.
+func Wrap(e error, format string, args ...interface{}) error {
 	if e == nil {
 		return nil
 	}
@@ -80,8 +70,18 @@ func Wrapf(e error, format string, args ...interface{}) error {
 		err = &Error{}
 		err = err.add(file, line, e)
 	}
-	err = err.add(file, line, fmt.Errorf(format, args...))
-	return err
+	return err.add(file, line, fmt.Errorf(format, args...))
+}
+
+// Cause returns the root error.
+func Cause(e error) error {
+	if e == nil {
+		return nil
+	}
+	if err, ok := e.(*Error); ok {
+		return err.errs[0].e
+	}
+	return e
 }
 
 // add is a helper function that adds an error to error stack.
