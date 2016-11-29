@@ -1,12 +1,14 @@
 # Simplified golang errors
+[![GoDoc](https://godoc.org/github.com/alext29/errors?status.svg)](https://godoc.org/github.com/alext29/errors)
 
 This package provides methods to handle and help log golang errors. Use this with the modified glog package to super simplify error handling in your code.
 
 ## Install
 
-`go get github.com/alext29/glog
-`go get github.com/alext29/errors
-
+```bash
+go get github.com/alext29/glog
+go get github.com/alext29/errors
+```
 The glog package patches the original golang/glog to handle errors.Error type.
 
 Logging error captures the entire error stack correctly, including line numbers and timestamps. And prints the error stack on separate lines, providing information similar to a stack trace.
@@ -14,17 +16,19 @@ Logging error captures the entire error stack correctly, including line numbers 
 ## Examples
 
 The code exposes the following functions
-
-`New(format string, args ...interface{}) error
-
+```go
+New(format string, args ...interface{}) error
+```
 Creates a new error.
 
-`Wrap(e error, format string, args ...interface{}) error
-
+```go
+Wrap(e error, format string, args ...interface{}) error
+```
 Wrap adds the additional information to the error stack.
 
-`Cause(e error) error
-
+```go
+Cause(e error) error
+```
 Cause returns the first error.
 
 ## Examples
@@ -61,7 +65,7 @@ This code will generate log smilar to the one below. Note the filename, line num
 ```bash
 E1128 21:19:07.663216    3586 mid.go:4] external error
 E1128 21:19:07.663222    3586 mid.go:4] external function failed
-E1128 21:19:07.663226    3586 top.go:4] failed mid function: test
+E1128 21:19:07.663226    3586 top.go:5] failed mid function: test
 ```
 
 ### Example 2
