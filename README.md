@@ -1,7 +1,7 @@
-# Simplified golang errors
+# Simplified golang error for logging.
 [![GoDoc](https://godoc.org/github.com/alext29/errors?status.svg)](https://godoc.org/github.com/alext29/errors)
 
-This package provides methods to handle and help log golang errors. Use this with the modified glog package to super simplify error handling in your code.
+This simple errors package integrates with glog and provides a super simplified way for handling and logging errors.
 
 ## Install
 
@@ -9,27 +9,31 @@ This package provides methods to handle and help log golang errors. Use this wit
 go get github.com/alext29/glog
 go get github.com/alext29/errors
 ```
-The glog package patches the original golang/glog to handle errors.Error type.
+The glog package patches the original golang/glog to work with errors package.
 
-Logging error captures the entire error stack correctly, including line numbers and timestamps. And prints the error stack on separate lines, providing information similar to a stack trace.
+## Error Handling
 
-## Examples
+This package exposes the following methods to handle errors.
 
-The code exposes the following functions
+Create a new error.
 ```go
 New(format string, args ...interface{}) error
 ```
-Creates a new error.
 
+Wrap adds the additional information to the error stack.
 ```go
 Wrap(e error, format string, args ...interface{}) error
 ```
-Wrap adds the additional information to the error stack.
 
+Cause returns the first error in error stack.
 ```go
 Cause(e error) error
 ```
-Cause returns the first error.
+Additional exposed methods are used by glog package to log error trace.
+
+## Error Logging
+
+Log errors using glog primitives Info(error), Warning(error), Error(error) or Fatal(error). This would log the relevant error stack along with line numbers and file names.
 
 ## Examples
 
