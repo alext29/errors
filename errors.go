@@ -1,5 +1,8 @@
 package errors
 
+// Package errors integrates with glog and provides a super
+// simplified way for handling and logging errors.
+
 import (
 	"fmt"
 	"runtime"
