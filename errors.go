@@ -10,51 +10,6 @@ import (
 	"time"
 )
 
-// emsg is a helper struct that holds information for a single error
-// in an error stack.
-type emsg struct {
-	time time.Time
-	file string
-	line int
-	e    error
-}
-
-// header for an emsg.
-func (m *emsg) header() (string, int, time.Time) {
-	return m.file, m.line, m.time
-}
-
-// msg for an emsg.
-func (m *emsg) msg() string {
-	return m.e.Error()
-}
-
-// Error represents a single error stack.
-type Error struct {
-	errs []*emsg
-}
-
-// Depth of error stack.
-func (err *Error) Depth() int {
-	return len(err.errs)
-}
-
-// Header information for an error in error stack.
-func (err *Error) Header(i int) (string, int, time.Time) {
-	if i < 0 || i >= err.Depth() {
-		return "", -1, time.Time{}
-	}
-	return err.errs[i].header()
-}
-
-// Msg for an error in error stack.
-func (err *Error) Msg(i int) string {
-	if i < 0 || i >= err.Depth() {
-		return ""
-	}
-	return err.errs[i].msg()
-}
-
 // New creates a new error.
 func New(format string, args ...interface{}) error {
 	file, line := fileline(2)
@@ -62,7 +17,7 @@ func New(format string, args ...interface{}) error {
 	return err.add(file, line, fmt.Errorf(format, args...))
 }
 
-// Wrap adds a error to stack with additional context.
+// Wrap adds error to stack with additional context.
 func Wrap(e error, format string, args ...interface{}) error {
 	if e == nil {
 		return nil
@@ -82,21 +37,35 @@ func Cause(e error) error {
 		return nil
 	}
 	if err, ok := e.(*Error); ok {
-		return err.errs[0].e
+		return err.stack[0].e
 	}
 	return e
 }
 
-// add is a helper function that adds an error to error stack.
-func (err *Error) add(file string, line int, e error) *Error {
-	m := &emsg{
-		time: time.Now(),
-		file: file,
-		line: line,
-		e:    e,
+// Error represents an error stack.
+type Error struct {
+	stack []*emsg
+}
+
+// Depth of error stack.
+func (err *Error) Depth() int {
+	return len(err.stack)
+}
+
+// Header information for ith error in stack.
+func (err *Error) Header(i int) (string, int, time.Time) {
+	if i < 0 || i >= err.Depth() {
+		return "", -1, time.Time{}
 	}
-	err.errs = append(err.errs, m)
-	return err
+	return err.stack[i].header()
+}
+
+// Msg for ith error in stack.
+func (err *Error) Msg(i int) string {
+	if i < 0 || i >= err.Depth() {
+		return ""
+	}
+	return err.stack[i].msg()
 }
 
 // Error implements error interface.
@@ -106,15 +75,39 @@ func (err *Error) Error() string {
 	}
 	first := true
 	var str string
-	for i := 0; i < len(err.errs); i++ {
-		file, line, _ := err.Header(i)
+	for i := 0; i < err.Depth(); i++ {
 		if !first {
 			str = fmt.Sprintf("%s :: ", str)
 		}
 		first = false
+		file, line, _ := err.Header(i)
 		str = fmt.Sprintf("%s%s:%d %s", str, file, line, err.Msg(i))
 	}
 	return str
+}
+
+// add an error to error stack.
+func (err *Error) add(file string, line int, e error) *Error {
+	err.stack = append(err.stack, &emsg{time.Now(), file, line, e})
+	return err
+}
+
+// emsg is single entry in the error stack.
+type emsg struct {
+	time time.Time
+	file string
+	line int
+	e    error
+}
+
+// header for an emsg.
+func (m *emsg) header() (string, int, time.Time) {
+	return m.file, m.line, m.time
+}
+
+// msg for an emsg.
+func (m *emsg) msg() string {
+	return m.e.Error()
 }
 
 // fileline retrieves the filename and line for calling function at given depth.

@@ -1,7 +1,7 @@
 # Simplified golang error handling and logging.
 [![GoDoc](https://godoc.org/github.com/alext29/errors?status.svg)](https://godoc.org/github.com/alext29/errors)
 
-This simple errors package integrates with glog and provides a super simplified way for handling and logging errors.
+This errors package integrates with glog and provides a super simplified way for handling and logging errors.
 
 ## Install
 
